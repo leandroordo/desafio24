@@ -2,7 +2,11 @@ import { useState } from "react";
 import { Button } from "react-bootstrap";
 import Nav from "react-bootstrap/Nav";
 
-function Header() {
+function Header({
+  handleShowAddNotesForm,
+}: {
+  handleShowAddNotesForm: () => void;
+}) {
   const [active, setActive] = useState("todas");
 
   return (
@@ -47,7 +51,11 @@ function Header() {
       </Nav.Item>
       <Nav.Item className="ms-sm-auto">
         <Nav.Link className="rounded-pill d-flex align-items-center px-3">
-          <Button variant="primary" className="btn-primary">
+          <Button
+            variant="primary"
+            className="btn-primary"
+            onClick={handleShowAddNotesForm}
+          >
             Agregar notas
           </Button>
         </Nav.Link>

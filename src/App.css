@@ -1,0 +1,15 @@
+.side-stick {
+  position: absolute;
+  width: 3px;
+  height: 35px;
+  left: 0;
+  background-color: rgba(82, 95, 127, 0.5);
+}
+
+.note-personal {
+  background-color: rgba(255, 80, 80, 0.5);
+}
+
+.note-trabajo {
+  background-color: rgba(44, 171, 227, 0.5);
+}
