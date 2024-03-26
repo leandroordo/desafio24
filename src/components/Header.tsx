@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Button } from "react-bootstrap";
 import Nav from "react-bootstrap/Nav";
+import { useNotesProvider } from "../context/NotesProvider";
+import { NoteTypesEnum } from "../types";
 
 function Header({
   handleShowAddNotesForm,
@@ -8,13 +10,35 @@ function Header({
   handleShowAddNotesForm: () => void;
 }) {
   const [active, setActive] = useState("todas");
+  const { FilterCards } = useNotesProvider();
 
   return (
     <Nav
       variant="pills"
       defaultActiveKey="todas"
       activeKey={active}
-      onSelect={(selectedKey) => setActive(selectedKey || "todas")}
+      onSelect={(selectedKey) => {
+        setActive(selectedKey || "todas");
+        var key: NoteTypesEnum;
+        switch (selectedKey) {
+          case "todas":
+            key = NoteTypesEnum.ninguna;
+            break;
+          case "trabajo":
+            key = NoteTypesEnum.trabajo;
+            break;
+          case "personal":
+            key = NoteTypesEnum.personal;
+            break;
+          case "favoritas":
+            key = NoteTypesEnum.favoritas;
+            break;
+          default:
+            key = NoteTypesEnum.ninguna;
+            break;
+        }
+        FilterCards(selectedKey ? key : NoteTypesEnum.ninguna);
+      }}
       className="py-2 px-4 bg-white mb-3 align-items-center"
     >
       <Nav.Item>

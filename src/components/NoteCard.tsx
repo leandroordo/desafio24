@@ -21,8 +21,7 @@ export default function NoteCard({
   favorite: boolean;
   handleEdit: () => void;
 }) {
-  const [checked, setChecked] = useState(false);
-  const { DeleteNote } = useNotesProvider();
+  const { DeleteNote, ToggleFavorite } = useNotesProvider();
 
   const typeClass =
     type === NoteTypesEnum.personal
@@ -51,9 +50,11 @@ export default function NoteCard({
               id={"toggle-favorite" + id}
               type="checkbox"
               variant="outline-warning"
-              checked={checked}
-              value={favorite ? 1 : 0}
-              onChange={(e) => setChecked(e.currentTarget.checked)}
+              checked={favorite}
+              value={1}
+              onChange={(e) => {
+                ToggleFavorite(id);
+              }}
             >
               <MdFavoriteBorder />
             </ToggleButton>

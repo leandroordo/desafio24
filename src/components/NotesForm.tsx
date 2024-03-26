@@ -3,6 +3,14 @@ import { Button, Form, Modal } from "react-bootstrap";
 import { NoteTypesEnum } from "../types";
 import { CardData, useNotesProvider } from "../context/NotesProvider";
 
+const initialState = {
+  title: "",
+  description: "",
+  category: NoteTypesEnum.ninguna,
+  date: new Date(),
+  isFavorite: false,
+};
+
 function NotesForm({
   show,
   handleClose,
@@ -13,12 +21,7 @@ function NotesForm({
   noteId: number;
 }) {
   const [validated, setValidated] = useState(false);
-  const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    category: NoteTypesEnum.ninguna,
-    date: new Date(),
-  });
+  const [formData, setFormData] = useState(initialState);
   const { AddOrUpdateNote, CardData } = useNotesProvider();
 
   const onFieldValueChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -27,10 +30,6 @@ function NotesForm({
       ...formData,
       [name]: value,
     });
-  };
-
-  const dateFromDateString = (dateString: Date) => {
-    return new Date(dateString).toISOString();
   };
 
   const handleAddOrUpdateNote = (event: React.FormEvent<HTMLFormElement>) => {
@@ -50,18 +49,13 @@ function NotesForm({
       title: formData.title,
       description: formData.description,
       category: formData.category,
-      isFavorite: false,
+      isFavorite: formData.isFavorite,
     };
 
     AddOrUpdateNote(newNote);
 
     //Limpiar controles
-    setFormData({
-      title: "",
-      description: "",
-      category: NoteTypesEnum.ninguna,
-      date: new Date(),
-    });
+    setFormData(initialState);
     handleClose();
   };
 
@@ -69,12 +63,7 @@ function NotesForm({
   useEffect(() => {
     if (noteId === 0) {
       //Limpiar controles
-      setFormData({
-        title: "",
-        description: "",
-        category: NoteTypesEnum.ninguna,
-        date: new Date(),
-      });
+      setFormData(initialState);
     } else {
       const cardToEdit = CardData?.find((card) => card.id === noteId);
       if (cardToEdit) setFormData({ ...cardToEdit });

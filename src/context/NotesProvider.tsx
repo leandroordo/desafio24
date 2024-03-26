@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useEffect } from "react";
 import { useContext, useState } from "react";
 import { NoteTypesEnum } from "../types";
 
@@ -14,16 +14,24 @@ export interface CardData {
 interface CardContext {
   CardData?: CardData[];
   AddOrUpdateNote: (data: CardData) => void;
-  DeleteNote: (id: Number) => void;
+  DeleteNote: (id: number) => void;
+  ToggleFavorite: (id: number) => void;
+  FilterCards: (type: NoteTypesEnum) => void;
 }
 
 export const NotesContext = React.createContext<CardContext>({
   AddOrUpdateNote: () => {},
   DeleteNote: () => {},
+  ToggleFavorite: () => {},
+  FilterCards: () => {},
 });
 
 export const NotesProvider = ({ children }: { children: React.ReactNode }) => {
   const [cardData, setCardData] = useState<CardData[]>([]);
+  const [filteredCardData, setFilteredCardData] = useState<CardData[]>([]);
+  const [currentCardType, setCurrentCardType] = useState<NoteTypesEnum>(
+    NoteTypesEnum.ninguna
+  );
 
   const addOrUpdateNote = (data: CardData) => {
     if (data.id !== 0) {
@@ -48,20 +56,47 @@ export const NotesProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const toggleFavorite = (id: Number) => {
+  const toggleFavorite = (id: number) => {
     const cardToFavourite = cardData.find((card) => card.id === id);
     if (cardToFavourite) {
       cardToFavourite.isFavorite = !cardToFavourite.isFavorite;
-      setCardData([...cardData, { ...cardToFavourite }]);
+      setCardData([...cardData]);
     }
   };
+
+  const filterCards = useCallback(
+    (type: NoteTypesEnum) => {
+      var filteredCards: CardData[];
+
+      switch (type) {
+        case NoteTypesEnum.ninguna:
+          filteredCards = [...cardData];
+          break;
+        case NoteTypesEnum.favoritas:
+          filteredCards = cardData.filter((card) => card.isFavorite === true);
+          break;
+        default:
+          filteredCards = cardData.filter((card) => card.category === type);
+          break;
+      }
+      setCurrentCardType(type);
+      setFilteredCardData(filteredCards);
+    },
+    [cardData]
+  );
+
+  useEffect(() => {
+    filterCards(currentCardType);
+  }, [cardData, currentCardType, filterCards]);
 
   return (
     <NotesContext.Provider
       value={{
         AddOrUpdateNote: addOrUpdateNote,
         DeleteNote: deleteNote,
-        CardData: cardData,
+        ToggleFavorite: toggleFavorite,
+        FilterCards: filterCards,
+        CardData: filteredCardData,
       }}
     >
       {children}
